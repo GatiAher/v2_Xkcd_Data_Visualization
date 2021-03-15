@@ -91,20 +91,14 @@ def go_into_subcategory(link, comic_tags, visited_subcategories):
         return
     soup = bs4.BeautifulSoup(text.text, 'lxml')
 
-    print("TITLE:", soup.title)
-
     tag = soup.title.string.lower()[9:-15]
-    print("TAG:", tag)
 
     if tag not in visited_subcategories:
         visited_subcategories.append(tag)
 
         serial_numbers = get_comic_serial_numbers(soup)
-        print("SN:", serial_numbers)
         for num in serial_numbers:
-            print("num", num)
             if num < len(comic_tags):
-                print("comic_tags[num]", comic_tags[num])
                 comic_tags[num].append(tag)
             else:
                 print("!! Error: unaccounted comic number", num)
@@ -127,13 +121,12 @@ if __name__ == "__main__":
 
     # save categories as one-hot vectors (1-0 indicating presence of category)
     # take out any categories that don't have any comics (pages with only subcategories)
-    print(comic_tags)
     mlb = MultiLabelBinarizer()
     comic_serial_numbers = [str(i) for i in range(num_comics)]
     df = pd.DataFrame(mlb.fit_transform(comic_tags),
                       columns=mlb.classes_,
                       index=comic_serial_numbers)
-    
+
     df.to_json(path_or_buf=comic_tags_save_location)
     print("Finished Step0: saving ", len(
         visited_subcategories), " subcategories")
