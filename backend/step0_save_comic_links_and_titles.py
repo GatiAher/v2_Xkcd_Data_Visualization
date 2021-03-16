@@ -28,8 +28,6 @@ def get_text(comic_number):
     """
     For each comic number, scrape info from explain xkcd page
 
-    Return comic's title and image url
-
     Args:
         comic_number (positive integer): comics are numbered sequentially
 
@@ -44,7 +42,8 @@ def get_text(comic_number):
     text = requests.get(
         "https://www.explainxkcd.com/wiki/index.php/" + str(comic_number))
     if text.status_code != 200:
-        raise Exception(str(text.status_code))
+        raise Exception(str(text.status_code) +
+                        " could not find explainxkcd page")
     soup = bs4.BeautifulSoup(text.text, 'html5lib')
 
     # get title
@@ -60,19 +59,17 @@ def get_text(comic_number):
 if __name__ == "__main__":
     """Record all comics in range 0-num_comics. Record any errors"""
 
-    start = 1
     num_comics = get_latest_comic_num() + 1
 
     titles = ["000empty000"] * num_comics
     image_urls = ["000empty000"] * num_comics
 
-    for i in tqdm(range(start, num_comics)):
+    for i in tqdm(range(1, num_comics)):
         try:
             title, image_url = get_text(i)
             titles[i] = title
             image_urls[i] = image_url
             print(i, title, image_url)
-            print("len titles", len(titles), "len image_urls", len(image_urls))
         except Exception as err:
             # record errors
             f = open(error_save_location + str(i) + ".txt", "w")

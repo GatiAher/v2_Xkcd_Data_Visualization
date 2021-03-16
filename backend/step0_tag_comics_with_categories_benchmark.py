@@ -1,8 +1,7 @@
 """
 extract and save user tags from 'explain xkcd' html pages
 
-saves to: 
-- "./data/comic_tags/comic_tags_df.pkl"
+takes 2-5 minutes to run
 
 @author: Gati Aher
 """
